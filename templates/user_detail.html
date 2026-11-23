@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>User details</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f1f5f9;margin:0;color:#172033}main{max-width:900px;margin:28px auto;padding:0 18px}.panel{background:white;padding:22px;border-radius:12px;margin:16px 0}
+label{font-weight:bold}select,button{padding:9px;border:1px solid #cbd5e1;border-radius:7px;margin:6px 0}button{background:#2563eb;color:white;border:0;cursor:pointer}
+table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:10px;border-bottom:1px solid #e2e8f0}.muted{color:#64748b}
+</style></head><body><main><a href="{{ url_for('users') }}">← Back to users</a>
+<h1>User details</h1><section class="panel"><h2>{{ user.full_name }}</h2>
+<p><b>Username:</b> {{ user.username }}</p><p><b>User ID:</b> {{ user.id }}</p><p><b>Application role:</b> {{ user.app_role }}</p><p><b>Status:</b> {{ user.status }}</p><p><b>Last login:</b> {{ user.last_login or 'Never' }}</p></section>
+{% with messages=get_flashed_messages() %}{% for message in messages %}<p>{{ message }}</p>{% endfor %}{% endwith %}
+{% if session.get('app_role') == 'admin' %}
+<section class="panel"><h2>Change account status</h2><form method="POST">
+<label for="status">Status</label><select id="status" name="status"><option value="active" {% if user.status=='active' %}selected{% endif %}>Active</option><option value="inactive" {% if user.status!='active' %}selected{% endif %}>Inactive</option></select>
+<button type="submit">Save status</button></form></section>
+<section class="panel"><h2>Assign a role</h2><form method="POST"><select name="add_role" required><option value="">Choose a role</option>{% for role in free %}<option value="{{ role.id }}">{{ role.name }}</option>{% endfor %}</select><button type="submit">Add role</button></form></section>
+<section class="panel"><h2>Remove a role</h2><form method="POST"><select name="remove_role" required><option value="">Choose a role</option>{% for role in roles %}<option value="{{ role.id }}">{{ role.name }}</option>{% endfor %}</select><button type="submit">Remove role</button></form></section>
+{% endif %}
+<section class="panel"><h2>Current roles</h2>{% if roles %}<ul>{% for role in roles %}<li>{{ role.name }}</li>{% endfor %}</ul>{% else %}<p class="muted">No roles assigned.</p>{% endif %}</section>
+<section class="panel"><h2>Effective permissions</h2><table><thead><tr><th>Resource</th><th>Sensitivity</th><th>Permission</th></tr></thead><tbody>{% for p in perms %}<tr><td>{{ p.name }}</td><td>{{ p.sensitivity }}</td><td>{{ p.permission }}</td></tr>{% else %}<tr><td colspan="3">No permissions found.</td></tr>{% endfor %}</tbody></table></section>
+</main></body></html>

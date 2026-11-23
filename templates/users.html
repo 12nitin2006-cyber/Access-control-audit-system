@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Users</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f1f5f9;margin:0;color:#172033}main{max-width:1050px;margin:30px auto;padding:0 18px}header{background:#172554;color:white;padding:20px 5%}
+table{width:100%;border-collapse:collapse;background:white;border-radius:10px;overflow:hidden}th,td{text-align:left;padding:13px;border-bottom:1px solid #e2e8f0}th{background:#dbeafe}a{color:#1d4ed8}.back{display:inline-block;margin:18px 0}
+</style></head><body><header><h1>User management</h1></header><main><a class="back" href="{{ url_for('dashboard') }}">← Dashboard</a>
+<table><thead><tr><th>ID</th><th>Full name</th><th>Username</th><th>Application role</th><th>Status</th><th>Assigned roles</th><th>Details</th></tr></thead><tbody>
+{% for user in users %}<tr><td>{{ user.id }}</td><td>{{ user.full_name }}</td><td>{{ user.username }}</td><td>{{ user.app_role }}</td><td>{{ user.status }}</td><td>{{ user.roles or 'None' }}</td><td><a href="{{ url_for('user_detail',uid=user.id) }}">View / manage</a></td></tr>
+{% else %}<tr><td colspan="7">No users found.</td></tr>{% endfor %}
+</tbody></table></main></body></html>

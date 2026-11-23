@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Access Logs</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            color: #172033;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 28px auto;
+            padding: 0 18px;
+        }
+
+        .wrap {
+            overflow-x: auto;
+            background: white;
+            border-radius: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 750px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+        }
+
+        th {
+            background: #dbeafe;
+        }
+
+        .granted {
+            color: #15803d;
+            font-weight: bold;
+        }
+
+        .denied {
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+        select,
+        button {
+            padding: 9px;
+            border-radius: 7px;
+            border: 1px solid #cbd5e1;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main>
+
+        <!-- Dashboard link -->
+        <a href="{{ url_for('dashboard') }}">
+            ← Dashboard
+        </a>
+
+        <h1>Access Logs</h1>
+
+        <!-- Filter Form -->
+        <form method="GET" action="{{ url_for('logs') }}">
+
+            <label for="result">
+                Filter result:
+            </label>
+
+            <select id="result" name="result">
+
+                <option value=""
+                    {% if not result %}selected{% endif %}>
+                    All results
+                </option>
+
+                <option value="granted"
+                    {% if result == 'granted' %}selected{% endif %}>
+                    Granted
+                </option>
+
+                <option value="denied"
+                    {% if result == 'denied' %}selected{% endif %}>
+                    Denied
+                </option>
+
+            </select>
+
+            <button type="submit">
+                Apply Filter
+            </button>
+
+        </form>
+
+        <!-- Access Logs Table -->
+        <div class="wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>User</th>
+                        <th>Resource</th>
+                        <th>Action</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for log in logs %}
+
+                    <tr>
+
+                        <td>{{ log.logged_at }}</td>
+
+                        <td>{{ log.full_name }}</td>
+
+                        <td>{{ log.resource }}</td>
+
+                        <td>{{ log.action }}</td>
+
+                        <td class="{{ log.result }}">
+                            {{ log.result|upper }}
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="5">
+                            No access logs found.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</body>
+</html>

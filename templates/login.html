@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Access Control System | Login</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#eef2ff;font-family:Arial,sans-serif;color:#172033}
+    .card{width:min(92%,390px);background:white;padding:32px;border-radius:16px;box-shadow:0 12px 35px #1e293b20}
+    h1{font-size:24px;margin:0 0 8px;color:#1d4ed8}p{color:#64748b}.field{margin:18px 0}
+    label{display:block;margin-bottom:7px;font-weight:600}input{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font-size:15px}
+    button{width:100%;padding:13px;border:0;border-radius:8px;background:#2563eb;color:white;font-weight:bold;cursor:pointer}
+    .message{padding:10px;background:#fee2e2;color:#991b1b;border-radius:8px}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Access Control System</h1>
+    <p>Sign in to continue to the security dashboard.</p>
+    {% with messages = get_flashed_messages() %}
+      {% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}
+    {% endwith %}
+    <form method="POST" action="{{ url_for('login') }}">
+      <div class="field"><label for="username">Username</label><input id="username" name="username" type="text" required autocomplete="username"></div>
+      <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" required autocomplete="current-password"></div>
+      <button type="submit">Login</button>
+    </form>
+  </main>
+</body>
+</html>

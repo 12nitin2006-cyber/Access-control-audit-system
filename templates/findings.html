@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Audit Findings</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            color: #172033;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 28px auto;
+            padding: 0 18px;
+        }
+
+        .panel,
+        .table-wrap {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 800px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+        }
+
+        th {
+            background: #dbeafe;
+        }
+
+        button,
+        .button {
+            padding: 9px 13px;
+            border: 0;
+            border-radius: 7px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .high {
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+        .medium {
+            color: #b45309;
+            font-weight: bold;
+        }
+
+        .low {
+            color: #15803d;
+            font-weight: bold;
+        }
+
+        .resolved {
+            color: #15803d;
+        }
+
+        .open {
+            color: #b91c1c;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main>
+
+        <a href="{{ url_for('dashboard') }}">
+            ← Dashboard
+        </a>
+
+        <h1>Security Audit Findings</h1>
+
+        {% if run %}
+
+        <!-- Latest Audit Information -->
+        <section class="panel">
+
+            <h2>Latest Audit</h2>
+
+            <p>Run ID: {{ run.id }}</p>
+            <p>Performed by: {{ run.run_by }}</p>
+            <p>Date: {{ run.run_at }}</p>
+            <p>Total findings: {{ run.total_findings }}</p>
+
+        </section>
+
+        <!-- Export Button -->
+        <div class="panel">
+
+            <a class="button" href="{{ url_for('export') }}">
+                Export Findings to CSV
+            </a>
+
+        </div>
+
+        <!-- Findings Table -->
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Rule</th>
+                        <th>Severity</th>
+                        <th>User</th>
+                        <th>Details</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for f in findings %}
+
+                    <tr>
+
+                        <td>{{ f.id }}</td>
+
+                        <td>{{ f.rule }}</td>
+
+                        <td class="{{ f.severity|lower }}">
+                            {{ f.severity|upper }}
+                        </td>
+
+                        <td>{{ f.full_name }}</td>
+
+                        <td>{{ f.detail }}</td>
+
+                        <td class="{{ f.status }}">
+                            {{ f.status }}
+                        </td>
+
+                        <td>
+
+                            {% if f.status == 'open'
+                            and session.get('app_role') in ['admin', 'auditor'] %}
+
+                            <form method="POST"
+                                  action="{{ url_for('resolve', fid=f.id) }}">
+
+                                <button type="submit">
+                                    Mark Resolved
+                                </button>
+
+                            </form>
+
+                            {% else %}
+
+                            —
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="7">
+                            No findings recorded for this audit.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <!-- No Audit Available -->
+        <section class="panel">
+
+            <p>No audit has been run yet.</p>
+
+            {% if session.get('app_role') in ['admin', 'auditor'] %}
+
+            <form method="POST" action="{{ url_for('run_audit') }}">
+
+                <button type="submit">
+                    Run Security Audit
+                </button>
+
+            </form>
+
+            {% endif %}
+
+        </section>
+
+        {% endif %}
+
+    </main>
+
+</body>
+</html>
+
